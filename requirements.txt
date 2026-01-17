@@ -1,0 +1,12 @@
+# Core dependencies required for running the app
+mss
+sounddevice
+numpy
+opencv-python
+pillow
+psutil
+sv_ttk
+
+# Optional (recommended for extra features)
+soundcard
+openwakeword
