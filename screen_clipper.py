@@ -1276,9 +1276,19 @@ class ScreenClipperApp(tk.Tk):
 
         When running from a PyInstaller onefile/onedir bundle the
         unpacked resources are available under sys._MEIPASS. Otherwise
-        fall back to the current working directory.
+        prefer the script's directory (module dir) when not frozen, and
+        fall back to the current working directory as a last resort.
         """
-        base = getattr(sys, '_MEIPASS', os.getcwd())
+        if getattr(sys, 'frozen', False):
+            # When PyInstaller produces a onefile exe, it unpacks resources to
+            # sys._MEIPASS. For onedir builds there may be no _MEIPASS; use the
+            # executable directory as a reliable fallback.
+            base = getattr(sys, '_MEIPASS', None)
+            if not base:
+                base = os.path.dirname(sys.executable)
+        else:
+            # use the directory containing this file (project dir)
+            base = os.path.dirname(os.path.abspath(__file__))
         try:
             return os.path.join(base, *parts)
         except Exception:
